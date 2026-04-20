@@ -811,8 +811,10 @@ function screenshotUrl(target: string) {
     "viewport.width": "1280",
     "viewport.height": "800",
     "screenshot.type": "jpeg",
-    "screenshot.quality": "80",
-    waitForTimeout: "1500",
+    "screenshot.quality": "82",
+    // Give the target site time to hydrate before the screenshot fires —
+    // most React/Next sites have a brief "Loading…" state on first paint.
+    waitForTimeout: "4000",
   });
   return `https://api.microlink.io/?${params.toString()}`;
 }
