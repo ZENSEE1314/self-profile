@@ -111,7 +111,7 @@ const DEV = {
       summary:
         "Social and care log for pet owners — vaccination tracking, feeding reminders, and a friendly community feed.",
       metric: "Daily-use app with recurring-event scheduling",
-      href: "https://github.com/ZENSEE1314/petbook",
+      href: "https://web-production-8835b.up.railway.app/",
       accent: "earth" as const,
       visual: "chart" as const,
     },
@@ -163,7 +163,7 @@ const DEV = {
       summary:
         "Non-custodial crypto wallet with multi-chain support, a DApp connector, and a built-in swap UI. Keys stay on-device.",
       metric: "Multi-chain signing · 100% on-device keys",
-      href: "https://github.com/ZENSEE1314/defi-wallet",
+      href: "https://defi-wallet-web.vercel.app/?v=2",
       accent: "earth" as const,
       visual: "grid" as const,
     },
@@ -176,7 +176,7 @@ const DEV = {
       summary:
         "Personal AI assistant with long-term memory, scheduling, and plug-in actions (calendar, email, Slack).",
       metric: "Always-on assistant with tool-use routing",
-      href: "https://github.com/ZENSEE1314/jarvis-railway",
+      href: "https://jarvis-railway-production-42ff.up.railway.app/",
       accent: "water" as const,
       visual: "chart" as const,
     },
@@ -746,7 +746,12 @@ function ProjectCard({
     >
       <div className="project-card__surface">
         <div className="project-card__visual">
-          <ProjectVisual kind={project.visual} accent={project.accent} />
+          <ProjectVisual
+            kind={project.visual}
+            accent={project.accent}
+            url={isExternal ? project.href : undefined}
+            alt={`${project.name} — live site preview`}
+          />
         </div>
         <div className="project-card__body">
           <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted">
@@ -794,14 +799,56 @@ function withAlpha(hex: string, alpha: number) {
   return `#${h}${a}`;
 }
 
+// Build a live screenshot URL for the given site via Microlink's public API.
+// Returns a URL that 302-redirects to the cached screenshot PNG, so it works
+// directly as an <img src>. No API key required for the free tier.
+function screenshotUrl(target: string) {
+  const params = new URLSearchParams({
+    url: target,
+    screenshot: "true",
+    meta: "false",
+    embed: "screenshot.url",
+    "viewport.width": "1280",
+    "viewport.height": "800",
+    "screenshot.type": "jpeg",
+    "screenshot.quality": "80",
+    waitForTimeout: "1500",
+  });
+  return `https://api.microlink.io/?${params.toString()}`;
+}
+
 function ProjectVisual({
   kind,
   accent,
+  url,
+  alt = "",
 }: {
   kind: "bagua" | "bento" | "grid" | "chart";
   accent: Accent;
+  url?: string;
+  alt?: string;
 }) {
   const c = ACCENT_HEX[accent];
+  const [imageFailed, setImageFailed] = useState(false);
+
+  // Prefer a live screenshot of the site when we have a public URL. Falls back
+  // to the generated SVG motif if the screenshot service can't deliver.
+  if (url && !imageFailed) {
+    return (
+      <img
+        src={screenshotUrl(url)}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        onError={() => setImageFailed(true)}
+        className="w-full h-full object-cover object-top rounded-xl"
+        style={{
+          boxShadow: "0 10px 30px -18px rgba(26,26,26,0.35), inset 0 0 0 1px rgba(26,26,26,0.06)",
+          background: "#faf6ed",
+        }}
+      />
+    );
+  }
 
   if (kind === "bagua") {
     return (
