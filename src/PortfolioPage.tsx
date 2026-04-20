@@ -19,7 +19,7 @@ const DEV = {
   headline: "I ship production web apps with AI inside.",
   subhead:
     "From idea to deployed product — React, TypeScript, Python, LLMs, payments, auth, and SEO that actually ranks. Available for freelance and contract work.",
-  location: "Kuala Lumpur · Remote worldwide",
+  location: "Singapore · Remote worldwide",
   email: "zensee1314@gmail.com",
   // Stat strip shown under hero.
   stats: [
@@ -226,7 +226,7 @@ function useSeo() {
     document.title = title;
     setMeta("name", "description", description);
     setMeta("name", "keywords",
-      "hire full-stack developer, AI web apps, React developer, TypeScript, FastAPI, Next.js, SaaS MVP, landing page developer, SEO, freelance software engineer, Kuala Lumpur developer");
+      "hire full-stack developer, AI web apps, React developer, TypeScript, FastAPI, Next.js, SaaS MVP, landing page developer, SEO, freelance software engineer, Singapore developer");
 
     setMeta("property", "og:title", title);
     setMeta("property", "og:description", description);
