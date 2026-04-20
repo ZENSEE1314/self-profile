@@ -87,7 +87,7 @@ const DEV = {
       metric: "Sub-1s LCP · structured data across all pages",
       href: "https://rebornwave.group",
       accent: "wood" as const,
-      visual: "bento" as const,
+      visual: "wave" as const,
     },
     {
       slug: "hatchme",
@@ -100,7 +100,7 @@ const DEV = {
       metric: "Concept → live prototype in one session",
       href: "https://hatchme.onrender.com",
       accent: "fire" as const,
-      visual: "grid" as const,
+      visual: "launch" as const,
     },
     {
       slug: "petbook",
@@ -113,7 +113,7 @@ const DEV = {
       metric: "Daily-use app with recurring-event scheduling",
       href: "https://web-production-8835b.up.railway.app/",
       accent: "earth" as const,
-      visual: "chart" as const,
+      visual: "paw" as const,
     },
     {
       slug: "mct",
@@ -126,7 +126,7 @@ const DEV = {
       metric: "Paid membership site with signal + content flows",
       href: "https://millionairecryptotraders.com/",
       accent: "metal" as const,
-      visual: "grid" as const,
+      visual: "candle" as const,
     },
     {
       slug: "seo-toolkit",
@@ -139,7 +139,7 @@ const DEV = {
       metric: "Actionable audits in under 60 seconds",
       href: "https://marketing-u0kg.onrender.com/",
       accent: "water" as const,
-      visual: "chart" as const,
+      visual: "scan" as const,
     },
     {
       slug: "chatsai",
@@ -152,7 +152,7 @@ const DEV = {
       metric: "Multi-provider LLM routing · millisecond streaming",
       href: "https://chatsai.app",
       accent: "fire" as const,
-      visual: "bento" as const,
+      visual: "bubbles" as const,
     },
     {
       slug: "defi-wallet",
@@ -165,7 +165,7 @@ const DEV = {
       metric: "Multi-chain signing · 100% on-device keys",
       href: "https://defi-wallet-web.vercel.app/?v=2",
       accent: "earth" as const,
-      visual: "grid" as const,
+      visual: "vault" as const,
     },
     {
       slug: "jarvis",
@@ -178,7 +178,7 @@ const DEV = {
       metric: "Always-on assistant with tool-use routing",
       href: "https://jarvis-railway-production-42ff.up.railway.app/",
       accent: "water" as const,
-      visual: "chart" as const,
+      visual: "orb" as const,
     },
   ],
   testimonials: [
@@ -746,12 +746,7 @@ function ProjectCard({
     >
       <div className="project-card__surface">
         <div className="project-card__visual">
-          <ProjectVisual
-            kind={project.visual}
-            accent={project.accent}
-            url={isExternal ? project.href : undefined}
-            alt={`${project.name} — live site preview`}
-          />
+          <ProjectVisual kind={project.visual} accent={project.accent} />
         </div>
         <div className="project-card__body">
           <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted">
@@ -799,162 +794,311 @@ function withAlpha(hex: string, alpha: number) {
   return `#${h}${a}`;
 }
 
-// Build a live screenshot URL for the given site via Microlink's public API.
-// Returns a URL that 302-redirects to the cached screenshot PNG, so it works
-// directly as an <img src>. No API key required for the free tier.
-function screenshotUrl(target: string) {
-  const params = new URLSearchParams({
-    url: target,
-    screenshot: "true",
-    meta: "false",
-    embed: "screenshot.url",
-    "viewport.width": "1280",
-    "viewport.height": "800",
-    "screenshot.type": "jpeg",
-    "screenshot.quality": "82",
-    // Give the target site time to hydrate before the screenshot fires —
-    // most React/Next sites have a brief "Loading…" state on first paint.
-    waitForTimeout: "4000",
-  });
-  return `https://api.microlink.io/?${params.toString()}`;
-}
+// Project visual kinds — each a stylised SVG motif rendered with a soft
+// radial backplate, accent gradients, and subtle 3D hints. Designed to feel
+// like a family (circular compositions, same parchment backplate) but be
+// individually recognisable per project.
+type VisualKind =
+  | "bagua"    // Ba Zi — trigram compass with taiji core
+  | "wave"     // RebornWave — concentric ripples + sun
+  | "launch"   // HatchMe — tilted rocket + particle trail
+  | "paw"      // Petbook — paw-print mandala
+  | "candle"   // MCT — isometric candlesticks + coin
+  | "scan"     // Marketing Toolkit — radar sweep
+  | "bubbles"  // ChatsAI — overlapping chat bubbles + nodes
+  | "vault"    // DeFi Wallet — layered cards + gem
+  | "orb";     // Jarvis — central orb with tilted orbit rings
 
 function ProjectVisual({
   kind,
   accent,
-  url,
-  alt = "",
 }: {
-  kind: "bagua" | "bento" | "grid" | "chart";
+  kind: VisualKind;
   accent: Accent;
-  url?: string;
-  alt?: string;
 }) {
   const c = ACCENT_HEX[accent];
-  const [imageFailed, setImageFailed] = useState(false);
+  const bgId = `pv-bg-${kind}-${accent}`;
 
-  // Prefer a live screenshot of the site when we have a public URL. Falls back
-  // to the generated SVG motif if the screenshot service can't deliver.
-  if (url && !imageFailed) {
-    return (
-      <img
-        src={screenshotUrl(url)}
-        alt={alt}
-        loading="lazy"
-        decoding="async"
-        onError={() => setImageFailed(true)}
-        className="w-full h-full object-cover object-top rounded-xl"
-        style={{
-          boxShadow: "0 10px 30px -18px rgba(26,26,26,0.35), inset 0 0 0 1px rgba(26,26,26,0.06)",
-          background: "#faf6ed",
-        }}
-      />
-    );
-  }
+  // Shared: soft parchment-to-accent radial backplate every motif sits on.
+  const Backplate = (
+    <>
+      <defs>
+        <radialGradient id={bgId} cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stopColor="#faf6ed" />
+          <stop offset="100%" stopColor={withAlpha(c, 0.25)} />
+        </radialGradient>
+      </defs>
+      <circle cx="100" cy="100" r="92" fill={`url(#${bgId})`} stroke={c} strokeOpacity="0.35" />
+    </>
+  );
 
-  if (kind === "bagua") {
-    return (
-      <svg viewBox="0 0 200 200" className="w-full h-full">
-        <defs>
-          <radialGradient id="pv-bagua" cx="50%" cy="50%" r="55%">
-            <stop offset="0%" stopColor="#faf6ed" />
-            <stop offset="100%" stopColor="#f1e3c9" />
-          </radialGradient>
-        </defs>
-        <g transform="translate(100 100)">
-          <circle r="90" fill="url(#pv-bagua)" stroke={c} strokeOpacity="0.4" />
-          <g className="compass-ring" style={{ transformOrigin: "0 0" }}>
-            {["☰","☱","☲","☳","☷","☶","☵","☴"].map((sym, i) => {
-              const a = (i * Math.PI * 2) / 8 - Math.PI / 2;
+  switch (kind) {
+    case "bagua":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          <g transform="translate(100 100)">
+            <g className="compass-ring" style={{ transformOrigin: "0 0" }}>
+              {["☰","☱","☲","☳","☷","☶","☵","☴"].map((sym, i) => {
+                const a = (i * Math.PI * 2) / 8 - Math.PI / 2;
+                return (
+                  <text
+                    key={i}
+                    x={Math.cos(a) * 72}
+                    y={Math.sin(a) * 72}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fontSize="18"
+                    fill="#1a1a1a"
+                    fontFamily="Noto Serif SC, serif"
+                  >
+                    {sym}
+                  </text>
+                );
+              })}
+            </g>
+            <circle r="40" fill="#faf6ed" stroke="#1a1a1a" strokeOpacity="0.3" />
+            <path d="M 0 -35 A 35 35 0 0 1 0 35 A 17 17 0 0 1 0 0 A 17 17 0 0 0 0 -35 Z" fill="#1a1a1a" />
+            <circle cy="-17" r="4" fill="#faf6ed" />
+            <circle cy="17" r="4" fill="#1a1a1a" />
+          </g>
+        </svg>
+      );
+
+    case "wave":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          <g transform="translate(100 100)">
+            {[78, 62, 46, 30].map((r, i) => (
+              <circle key={r} r={r} fill="none" stroke={c} strokeOpacity={0.15 + i * 0.12} strokeWidth={1.5} />
+            ))}
+            {/* Horizon line */}
+            <line x1="-70" x2="70" y1="0" y2="0" stroke={c} strokeOpacity="0.35" strokeDasharray="2 4" />
+            {/* Rising sun */}
+            <defs>
+              <radialGradient id={`${bgId}-sun`} cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stopColor={withAlpha(c, 0.95)} />
+                <stop offset="100%" stopColor={withAlpha(c, 0.4)} />
+              </radialGradient>
+            </defs>
+            <circle cy="6" r="22" fill={`url(#${bgId}-sun)`} />
+            <circle cy="6" r="22" fill="none" stroke={c} strokeOpacity="0.6" />
+          </g>
+        </svg>
+      );
+
+    case "launch":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          {/* Stars */}
+          {[[40,50,1.5],[160,40,1.2],[170,120,1.8],[28,140,1.2],[148,150,1]].map(([x,y,r],i) => (
+            <circle key={i} cx={x as number} cy={y as number} r={r as number} fill={c} opacity="0.5" />
+          ))}
+          {/* Tilted rocket */}
+          <g transform="translate(100 105) rotate(-28)">
+            {/* Flame trail */}
+            <path d="M -8 40 Q 0 58 8 40 Q 4 50 0 66 Q -4 50 -8 40 Z" fill={c} opacity="0.75" />
+            <path d="M -4 44 Q 0 54 4 44 Q 2 52 0 60 Q -2 52 -4 44 Z" fill="#faf6ed" opacity="0.85" />
+            {/* Body */}
+            <path d="M 0 -44 Q 14 -20 14 22 L -14 22 Q -14 -20 0 -44 Z" fill={withAlpha(c, 0.9)} stroke={c} />
+            {/* Window */}
+            <circle cy="-12" r="7" fill="#faf6ed" stroke={c} />
+            {/* Fins */}
+            <path d="M -14 22 L -24 38 L -14 32 Z" fill={c} />
+            <path d="M 14 22 L 24 38 L 14 32 Z" fill={c} />
+          </g>
+        </svg>
+      );
+
+    case "paw":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          <g transform="translate(100 108)">
+            {/* Main pad */}
+            <ellipse cy="12" rx="30" ry="26" fill={withAlpha(c, 0.9)} stroke={c} />
+            {/* Toe beans */}
+            <ellipse cx="-34" cy="-18" rx="11" ry="14" fill={withAlpha(c, 0.85)} stroke={c} />
+            <ellipse cx="-12" cy="-34" rx="11" ry="14" fill={withAlpha(c, 0.85)} stroke={c} />
+            <ellipse cx="12"  cy="-34" rx="11" ry="14" fill={withAlpha(c, 0.85)} stroke={c} />
+            <ellipse cx="34"  cy="-18" rx="11" ry="14" fill={withAlpha(c, 0.85)} stroke={c} />
+            {/* Tiny hearts floating */}
+            <path d="M -52 -50 q -3 -4 -6 0 q 3 5 6 8 q 3 -3 6 -8 q -3 -4 -6 0 Z" fill={c} opacity="0.55" />
+            <path d="M 52 -44 q -2.5 -3 -5 0 q 2.5 4 5 6 q 2.5 -2 5 -6 q -2.5 -3 -5 0 Z" fill={c} opacity="0.55" />
+          </g>
+        </svg>
+      );
+
+    case "candle": {
+      // Three candlesticks (isometric-ish tilt via skew) + trend arc + coin.
+      const candles: Array<[number, number, number, "up" | "down"]> = [
+        [58, 62, 44, "up"],
+        [94, 48, 60, "down"],
+        [130, 36, 72, "up"],
+      ];
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          <g transform="translate(0 30)">
+            {candles.map(([x, top, bot, dir], i) => {
+              const bullish = dir === "up";
               return (
-                <text
-                  key={i}
-                  x={Math.cos(a) * 72}
-                  y={Math.sin(a) * 72}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fontSize="18"
-                  fill="#1a1a1a"
-                  fontFamily="Noto Serif SC, serif"
-                >
-                  {sym}
-                </text>
+                <g key={i}>
+                  {/* Wick */}
+                  <line x1={x} x2={x} y1={top - 10} y2={bot + 10} stroke={c} strokeWidth="1.5" />
+                  {/* Body */}
+                  <rect
+                    x={x - 10} y={top} width="20" height={bot - top}
+                    fill={bullish ? withAlpha(c, 0.95) : "#faf6ed"}
+                    stroke={c}
+                  />
+                </g>
               );
             })}
-          </g>
-          <circle r="40" fill="#faf6ed" stroke="#1a1a1a" strokeOpacity="0.3" />
-          <path d="M 0 -35 A 35 35 0 0 1 0 35 A 17 17 0 0 1 0 0 A 17 17 0 0 0 0 -35 Z" fill="#1a1a1a" />
-          <circle cy="-17" r="4" fill="#faf6ed" />
-          <circle cy="17" r="4" fill="#1a1a1a" />
-        </g>
-      </svg>
-    );
-  }
-
-  if (kind === "bento") {
-    const tiles: Array<[number, number, number, number, number]> = [
-      // x, y, w, h, opacity
-      [6, 6, 78, 52, 0.22],
-      [90, 6, 50, 24, 0.16],
-      [146, 6, 48, 24, 0.1],
-      [90, 36, 104, 22, 0.16],
-      [6, 64, 60, 50, 0.1],
-      [72, 64, 58, 50, 0.22],
-      [136, 64, 58, 50, 0.14],
-    ];
-    return (
-      <svg viewBox="0 0 200 120" className="w-full h-full">
-        {tiles.map(([x, y, w, h, op], i) => (
-          <rect
-            key={i}
-            x={x} y={y} width={w} height={h} rx="8"
-            fill={withAlpha(c, op)}
-            stroke={withAlpha(c, 0.4)}
-            strokeWidth="0.75"
-          />
-        ))}
-      </svg>
-    );
-  }
-
-  if (kind === "grid") {
-    return (
-      <svg viewBox="0 0 200 120" className="w-full h-full">
-        {Array.from({ length: 4 }).map((_, r) =>
-          Array.from({ length: 7 }).map((__, col) => (
-            <rect
-              key={`${r}-${col}`}
-              x={6 + col * 28}
-              y={6 + r * 28}
-              width="22"
-              height="22"
-              rx="4"
-              fill={withAlpha(c, 0.08 + ((r + col) % 4) * 0.08)}
-              stroke={withAlpha(c, 0.3)}
-              strokeWidth="0.5"
+            {/* Trend arrow */}
+            <polyline
+              points="40,90 70,72 105,55 140,38 168,22"
+              fill="none"
+              stroke={c}
+              strokeOpacity="0.55"
+              strokeWidth="1.5"
+              strokeDasharray="3 3"
             />
-          )),
-        )}
-      </svg>
-    );
-  }
+            {/* Baseline */}
+            <line x1="30" x2="170" y1="120" y2="120" stroke={c} strokeOpacity="0.35" />
+          </g>
+          {/* Floating coin */}
+          <g transform="translate(150 60)">
+            <circle r="18" fill={withAlpha(c, 0.25)} stroke={c} />
+            <circle r="12" fill="#faf6ed" stroke={c} />
+            <text y="4" textAnchor="middle" fontSize="12" fontWeight="700" fill={c}>$</text>
+          </g>
+        </svg>
+      );
+    }
 
-  // chart
-  const pts = [
-    [6, 96],  [30, 70], [54, 82], [78, 50], [102, 58],
-    [126, 30],[150, 42],[174, 18],[194, 28],
-  ];
-  const line = pts.map((p) => p.join(",")).join(" ");
-  const area = `${line} 194,114 6,114`;
-  return (
-    <svg viewBox="0 0 200 120" className="w-full h-full">
-      <polygon points={area} fill={withAlpha(c, 0.15)} />
-      <polyline points={line} fill="none" stroke={c} strokeWidth="3" />
-      {pts.map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="2.5" fill={c} />
-      ))}
-    </svg>
-  );
+    case "scan":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          <g transform="translate(100 100)">
+            {/* Crosshairs */}
+            <line x1="-82" x2="82" y1="0" y2="0" stroke={c} strokeOpacity="0.3" strokeDasharray="2 3" />
+            <line x1="0" x2="0" y1="-82" y2="82" stroke={c} strokeOpacity="0.3" strokeDasharray="2 3" />
+            {/* Range rings */}
+            {[26, 48, 70].map((r) => (
+              <circle key={r} r={r} fill="none" stroke={c} strokeOpacity="0.35" />
+            ))}
+            {/* Sweep */}
+            <g className="compass-ring" style={{ transformOrigin: "0 0" }}>
+              <path
+                d="M 0 0 L 70 0 A 70 70 0 0 0 35 -60.6 Z"
+                fill={withAlpha(c, 0.35)}
+                stroke={c}
+                strokeOpacity="0.4"
+              />
+            </g>
+            {/* Data points */}
+            {[[36,-14],[18,-52],[-32,22],[-16,54],[54,38]].map(([x,y],i) => (
+              <g key={i}>
+                <circle cx={x} cy={y} r="6" fill={withAlpha(c, 0.25)} />
+                <circle cx={x} cy={y} r="3" fill={c} />
+              </g>
+            ))}
+          </g>
+        </svg>
+      );
+
+    case "bubbles":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          {/* Connection lines (neural hint) */}
+          <g stroke={c} strokeOpacity="0.35" strokeWidth="1" fill="none">
+            <line x1="60" y1="76" x2="132" y2="110" />
+            <line x1="132" y1="110" x2="72" y2="146" />
+            <line x1="60" y1="76" x2="72" y2="146" />
+          </g>
+          {/* Bubble 1 (AI) */}
+          <g transform="translate(60 76)">
+            <path d="M -36 -22 H 32 a 10 10 0 0 1 10 10 V 14 a 10 10 0 0 1 -10 10 H -14 L -24 38 L -20 24 H -36 a 10 10 0 0 1 -10 -10 V -12 a 10 10 0 0 1 10 -10 Z"
+              fill={withAlpha(c, 0.95)} stroke={c} />
+            {/* dots */}
+            <circle cx="-10" cy="1" r="3" fill="#faf6ed" />
+            <circle cx="0" cy="1" r="3" fill="#faf6ed" />
+            <circle cx="10" cy="1" r="3" fill="#faf6ed" />
+          </g>
+          {/* Bubble 2 (user) */}
+          <g transform="translate(138 116)">
+            <path d="M 30 -18 H -26 a 8 8 0 0 0 -8 8 V 10 a 8 8 0 0 0 8 8 H 12 L 22 30 L 18 18 H 30 a 8 8 0 0 0 8 -8 V -10 a 8 8 0 0 0 -8 -8 Z"
+              fill="#faf6ed" stroke={c} />
+          </g>
+          {/* Node markers at corners */}
+          <circle cx="60" cy="76" r="4" fill={c} />
+          <circle cx="132" cy="110" r="4" fill={c} />
+          <circle cx="72" cy="146" r="4" fill={c} />
+        </svg>
+      );
+
+    case "vault":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          {/* Layered cards, tilted */}
+          <g transform="translate(100 108)">
+            <g transform="rotate(-14) translate(0 4)">
+              <rect x="-50" y="-28" width="100" height="56" rx="10" fill="#faf6ed" stroke={c} />
+            </g>
+            <g transform="rotate(-6) translate(0 0)">
+              <rect x="-52" y="-30" width="104" height="60" rx="10" fill={withAlpha(c, 0.6)} stroke={c} />
+            </g>
+            <g transform="rotate(2) translate(0 -4)">
+              <rect x="-54" y="-32" width="108" height="64" rx="12" fill={withAlpha(c, 0.95)} stroke={c} />
+              {/* Chip */}
+              <rect x="-40" y="-16" width="20" height="14" rx="3" fill="#faf6ed" opacity="0.85" />
+              {/* Magstripe dots */}
+              <circle cx="-4" cy="14" r="2.5" fill="#faf6ed" />
+              <circle cx="4"  cy="14" r="2.5" fill="#faf6ed" />
+              <circle cx="12" cy="14" r="2.5" fill="#faf6ed" />
+              <circle cx="20" cy="14" r="2.5" fill="#faf6ed" />
+            </g>
+          </g>
+          {/* Floating gem */}
+          <g transform="translate(54 54)">
+            <polygon points="0,-14 12,-4 8,12 -8,12 -12,-4" fill={withAlpha(c, 0.9)} stroke={c} />
+            <polygon points="0,-14 12,-4 0,0 -12,-4" fill="#faf6ed" opacity="0.6" />
+          </g>
+        </svg>
+      );
+
+    case "orb":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          <defs>
+            <radialGradient id={`${bgId}-core`} cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stopColor="#faf6ed" />
+              <stop offset="100%" stopColor={c} />
+            </radialGradient>
+          </defs>
+          <g transform="translate(100 100)">
+            {/* Tilted orbit rings — three different axes for 3D feel */}
+            <ellipse rx="76" ry="22" fill="none" stroke={c} strokeOpacity="0.45" />
+            <ellipse rx="76" ry="22" transform="rotate(60)" fill="none" stroke={c} strokeOpacity="0.3" />
+            <ellipse rx="76" ry="22" transform="rotate(-60)" fill="none" stroke={c} strokeOpacity="0.3" />
+            {/* Orbit dots on primary ring */}
+            <circle cx="76" cy="0" r="4" fill={c} />
+            <circle cx="-76" cy="0" r="4" fill={c} />
+            {/* Core orb */}
+            <circle r="28" fill={`url(#${bgId}-core)`} stroke={c} />
+            <circle r="28" fill="none" stroke="#faf6ed" strokeOpacity="0.6" strokeWidth="2" />
+            <circle cx="-8" cy="-10" r="6" fill="#faf6ed" opacity="0.55" />
+          </g>
+        </svg>
+      );
+  }
 }
 
 // ============================================================================
