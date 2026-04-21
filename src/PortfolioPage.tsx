@@ -220,7 +220,7 @@ function useSeo() {
       desc: document.querySelector('meta[name="description"]')?.getAttribute("content") ?? "",
     };
 
-    const title = `${DEV.name} — ${DEV.tagline} | Hire for AI & Web`;
+    const title = `${DEV.name} — ${DEV.tagline} | Engage for AI & Web`;
     const description = `${DEV.name} builds AI-powered web apps, SaaS MVPs, and SEO-ready landing pages. ${DEV.subhead}`;
 
     document.title = title;
@@ -405,7 +405,7 @@ export function PortfolioPage() {
             {DEV.email}
           </a>
           <a href="#contact" className="btn-primary text-sm">
-            Hire me
+            Engage me
           </a>
         </div>
       </header>
