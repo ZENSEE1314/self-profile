@@ -64,19 +64,6 @@ const DEV = {
   ],
   projects: [
     {
-      slug: "bazi-suite",
-      name: "Ba Zi Metaphysical Suite",
-      role: "Solo founder / full-stack",
-      year: "2025",
-      tags: ["React", "TypeScript", "FastAPI", "Postgres", "Stripe", "Claude"],
-      summary:
-        "Personalised Ba Zi, Feng Shui, numerology, and face/palm readings with an AI reader. Multilingual (EN/中文/BM), Stripe-metered with a 3-tier referral engine.",
-      metric: "AI-powered readings in 3 languages · full Stripe billing",
-      href: "https://trustworthy-alignment-production-f6f4.up.railway.app/",
-      accent: "earth" as const,
-      visual: "bagua" as const,
-    },
-    {
       slug: "rebornwave",
       name: "RebornWave",
       role: "Founder / full-stack",
@@ -179,6 +166,19 @@ const DEV = {
       href: "https://jarvis-railway-production-42ff.up.railway.app/",
       accent: "water" as const,
       visual: "orb" as const,
+    },
+    {
+      slug: "bazi-suite",
+      name: "Ba Zi Metaphysical Suite",
+      role: "Solo founder / full-stack",
+      year: "2025",
+      tags: ["React", "TypeScript", "FastAPI", "Postgres", "Stripe", "Claude"],
+      summary:
+        "Personalised Ba Zi, Feng Shui, numerology, and face/palm readings with an AI reader. Multilingual (EN/中文/BM), Stripe-metered with a 3-tier referral engine.",
+      metric: "AI-powered readings in 3 languages · full Stripe billing",
+      href: "https://trustworthy-alignment-production-f6f4.up.railway.app/",
+      accent: "earth" as const,
+      visual: "bagua" as const,
     },
   ],
   testimonials: [
