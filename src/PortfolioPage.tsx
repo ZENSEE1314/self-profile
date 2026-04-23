@@ -168,6 +168,32 @@ const DEV = {
       visual: "orb" as const,
     },
     {
+      slug: "clawcode",
+      name: "ClawCode",
+      role: "Founder",
+      year: "2025",
+      tags: ["TypeScript", "Node.js", "LLM", "CLI"],
+      summary:
+        "Developer tool for AI-assisted code editing — grabs repo context, runs scoped refactors, and commits clean diffs.",
+      metric: "Scoped repo edits with live preview",
+      href: "https://clawcode-production.up.railway.app/",
+      accent: "metal" as const,
+      visual: "code" as const,
+    },
+    {
+      slug: "agent-world",
+      name: "Agent World",
+      role: "Founder",
+      year: "2025",
+      tags: ["Python", "Claude", "Multi-agent", "Railway"],
+      summary:
+        "Multi-agent playground where LLM agents collaborate on tasks — message passing, shared memory, and role-based tooling.",
+      metric: "Real-time multi-agent orchestration",
+      href: "https://agent-world-production-dbf5.up.railway.app/",
+      accent: "wood" as const,
+      visual: "globe" as const,
+    },
+    {
       slug: "bazi-suite",
       name: "Ba Zi Metaphysical Suite",
       role: "Solo founder / full-stack",
@@ -807,7 +833,9 @@ type VisualKind =
   | "scan"     // Marketing Toolkit — radar sweep
   | "bubbles"  // ChatsAI — overlapping chat bubbles + nodes
   | "vault"    // DeFi Wallet — layered cards + gem
-  | "orb";     // Jarvis — central orb with tilted orbit rings
+  | "orb"      // Jarvis — central orb with tilted orbit rings
+  | "code"     // ClawCode — terminal window + bracket claws
+  | "globe";   // Agent World — globe with agent nodes + orbit
 
 function ProjectVisual({
   kind,
@@ -1095,6 +1123,92 @@ function ProjectVisual({
             <circle r="28" fill={`url(#${bgId}-core)`} stroke={c} />
             <circle r="28" fill="none" stroke="#faf6ed" strokeOpacity="0.6" strokeWidth="2" />
             <circle cx="-8" cy="-10" r="6" fill="#faf6ed" opacity="0.55" />
+          </g>
+        </svg>
+      );
+
+    case "code":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          {/* Big curly "claw" brackets framing the terminal */}
+          <text
+            x="40" y="118"
+            fontSize="80"
+            fill={c}
+            fillOpacity="0.35"
+            fontFamily="Noto Serif SC, serif"
+            textAnchor="middle"
+          >
+            {"{"}
+          </text>
+          <text
+            x="160" y="118"
+            fontSize="80"
+            fill={c}
+            fillOpacity="0.35"
+            fontFamily="Noto Serif SC, serif"
+            textAnchor="middle"
+          >
+            {"}"}
+          </text>
+          {/* Terminal window */}
+          <g transform="translate(100 100)">
+            <rect x="-54" y="-36" width="108" height="72" rx="10" fill={withAlpha(c, 0.92)} stroke={c} />
+            {/* Title bar */}
+            <line x1="-54" x2="54" y1="-22" y2="-22" stroke="#faf6ed" strokeOpacity="0.25" />
+            <circle cx="-46" cy="-29" r="2.5" fill="#faf6ed" opacity="0.7" />
+            <circle cx="-38" cy="-29" r="2.5" fill="#faf6ed" opacity="0.5" />
+            <circle cx="-30" cy="-29" r="2.5" fill="#faf6ed" opacity="0.35" />
+            {/* Prompt + bars */}
+            <text x="-46" y="-6" fontSize="10" fill="#faf6ed" fontFamily="ui-monospace, monospace">{"›"}</text>
+            <rect x="-34" y="-11" width="60" height="4" rx="1" fill="#faf6ed" opacity="0.85" />
+            <rect x="-46" y="2" width="44" height="4" rx="1" fill="#faf6ed" opacity="0.55" />
+            <rect x="-46" y="14" width="68" height="4" rx="1" fill="#faf6ed" opacity="0.7" />
+            {/* Blinking cursor */}
+            <rect x="28" y="10" width="5" height="10" fill="#faf6ed" />
+          </g>
+        </svg>
+      );
+
+    case "globe":
+      return (
+        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl">
+          {Backplate}
+          <defs>
+            <radialGradient id={`${bgId}-globe`} cx="38%" cy="32%" r="70%">
+              <stop offset="0%" stopColor="#faf6ed" />
+              <stop offset="100%" stopColor={c} />
+            </radialGradient>
+          </defs>
+          <g transform="translate(100 100)">
+            {/* Outer orbit — dashed */}
+            <ellipse rx="86" ry="26" fill="none" stroke={c} strokeOpacity="0.35" strokeDasharray="3 4" />
+            {/* Satellite on orbit */}
+            <g transform="translate(84 4)">
+              <circle r="5" fill={withAlpha(c, 0.95)} stroke="#faf6ed" strokeWidth="1" />
+              <line x1="-10" y1="0" x2="-4" y2="0" stroke={c} strokeOpacity="0.5" />
+              <line x1="4" y1="0" x2="10" y2="0" stroke={c} strokeOpacity="0.5" />
+            </g>
+            {/* Globe sphere */}
+            <circle r="56" fill={`url(#${bgId}-globe)`} stroke={c} />
+            {/* Latitude ellipses */}
+            <ellipse rx="56" ry="18" fill="none" stroke={c} strokeOpacity="0.55" />
+            <ellipse rx="56" ry="38" fill="none" stroke={c} strokeOpacity="0.35" />
+            {/* Longitude ellipses */}
+            <ellipse rx="18" ry="56" fill="none" stroke={c} strokeOpacity="0.55" />
+            <ellipse rx="38" ry="56" fill="none" stroke={c} strokeOpacity="0.35" />
+            {/* Agent pins on the surface */}
+            <g fill={c}>
+              <circle cx="28" cy="-28" r="4" />
+              <circle cx="-34" cy="8" r="4" />
+              <circle cx="-4" cy="42" r="4" />
+            </g>
+            <g fill="#faf6ed">
+              <circle cx="28" cy="-28" r="1.5" />
+              <circle cx="-34" cy="8" r="1.5" />
+              <circle cx="-4" cy="42" r="1.5" />
+            </g>
           </g>
         </svg>
       );
